@@ -22,8 +22,9 @@ resources:
         java -Xms2G -Xmx7G -d64 -jar server.jar nogui
         sed -i 's/false/true/g' eula.txt
 
+        # adjust the RAM settings to the instance type
         apt-get install -y screen
-        screen -dmS mcs java -Xms2G -Xmx7G -d64 -jar server.jar nogui
+        screen -dmS mcs java -Xms2G -Xmx7G -XX:+UseG1GC -d64 -server -jar server.jar nogui
 
         cat << EOF > backup.sh
         #!/bin/bash
