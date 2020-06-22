@@ -57,7 +57,7 @@ def GenerateConfig(context):
             context.env["project"],
             context.properties["zone"],
             "machineTypes",
-            "n1-standard-2"
+            context.properties["machine-type"]
         ),
         "disks": [
             {
