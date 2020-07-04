@@ -6,41 +6,41 @@ resources:
   - name: server
     type: minecraft_vm.py
     properties:
-      region: europe-west4
-      zone: europe-west4-c
+      region: europe-west1
+      zone: europe-west1-c
       machine-type: n1-standard-1
       startup-script: |
-        #!/bin/bash
-        # mkdir -p /home/minecraft
-        # mkfs.ext4 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/disk/by-id/google-minecraft-disk
-        # mount -o discard,defaults /dev/disk/by-id/google-minecraft-disk /home/minecraft
+        !/bin/bash
+        mkdir -p /home/minecraft
+        mkfs.ext4 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/disk/by-id/google-minecraft-disk
+        mount -o discard,defaults /dev/disk/by-id/google-minecraft-disk /home/minecraft
 
         apt-get update
         apt-get install -y default-jre-headless
 
         cd /home/minecraft
-        # wget -O paper.jar https://papermc.io/api/v1/paper/1.15.2/283/download
-        # java -Xms2G -Xmx3G -d64 -jar paper.jar nogui
-        # sed -i 's/false/true/g' eula.txt
+        wget -O paper.jar https://papermc.io/api/v1/paper/1.15.2/375/download
+        java -Xms2G -Xmx3G -d64 -jar paper.jar nogui
+        sed -i 's/false/true/g' eula.txt
 
         apt-get install -y screen
-        screen -dmS mcs java -Xms2G -Xmx3G -d64 -jar paper.jar nogui
+        # screen -dmS mcs java -Xms2G -Xmx3G -d64 -jar paper.jar nogui
 
-        # cat << EOF > backup.sh
-        # #!/bin/bash
-        # screen -r mcs -X stuff '/save-all\n/save-off\n'
-        # TIMESTAMP=$(date "+%Y%m%d-%H%M%S")
-        # /usr/bin/gsutil -m cp -R ${BASH_SOURCE%/*}/world gs://$(ref.storage.bucket)/$TIMESTAMP-world/world
-        # /usr/bin/gsutil -m cp -R ${BASH_SOURCE%/*}/world_nether gs://$(ref.storage.bucket)/$TIMESTAMP-world/world_nether
-        # /usr/bin/gsutil -m cp -R ${BASH_SOURCE%/*}/world_the_end gs://$(ref.storage.bucket)/$TIMESTAMP-world/world_the_end
-        # screen -r mcs -X stuff '/save-on\n'
-        # EOF
+        cat << EOF > backup.sh
+        #!/bin/bash
+        screen -r mcs -X stuff '/save-all\n/save-off\n'
+        TIMESTAMP=$(date "+%Y%m%d-%H%M%S")
+        /usr/bin/gsutil -m cp -R ${BASH_SOURCE%/*}/world gs://$(ref.storage.bucket)/$TIMESTAMP-world/world
+        /usr/bin/gsutil -m cp -R ${BASH_SOURCE%/*}/world_nether gs://$(ref.storage.bucket)/$TIMESTAMP-world/world_nether
+        /usr/bin/gsutil -m cp -R ${BASH_SOURCE%/*}/world_the_end gs://$(ref.storage.bucket)/$TIMESTAMP-world/world_the_end
+        screen -r mcs -X stuff '/save-on\n'
+        EOF
 
-        # chmod 755 /home/minecraft/backup.sh
-        # crontab -l > mycron
-        # echo "0 */4 * * * /home/minecraft/backup.sh" >> mycron
-        # crontab mycron
-        # rm mycron
+        chmod 755 /home/minecraft/backup.sh
+        crontab -l > mycron
+        echo "0 */4 * * * /home/minecraft/backup.sh" >> mycron
+        crontab mycron
+        rm mycron
 
   - name: storage
     type: minecraft_storage.py
